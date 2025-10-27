@@ -10,8 +10,14 @@ router.route("/").get(async (req, res) => {
 });
 
 router.route("/:id").get(async (req, res) => {
-  const track = await getTrackById(id);
-  if (!track) return res.status(404).send("Track not found.");
-  // possible issue in the future??
-  res.send(track);
+  try {
+    if (Number.isNaN(Number(req.params.id)))
+      return res.status(400).send("ID must be a valid number.");
+    const track = await getTrackById(req.params.id);
+    if (!track) return res.status(404).send("Track not found.");
+    // possible issue in the future??
+    res.send(track);
+  } catch (error) {
+    next(error);
+  }
 });
